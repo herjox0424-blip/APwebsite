@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aura Points Leaderboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<main class="container">
+  <header>
+    <p class="eyebrow">COMMUNITY RANKINGS</p>
+    <h1>Aura <span>Points</span></h1>
+    <p class="subtitle">The official server leaderboard</p>
+  </header>
+  <section class="leaderboard">
+    <div class="list-heading"><span>RANK / MEMBER</span><span>AURA POINTS</span></div>
+    {% for member in members %}
+    <article class="member-row">
+      <div class="identity">
+        <span class="rank rank-{{ loop.index }}">{{ loop.index }}</span>
+        <div class="member-info">
+          <strong>{{ member.display_name }}</strong>
+          <small>Discord ID: {{ member.discord_id }}</small>
+        </div>
+      </div>
+      <strong class="points">{{ "{:,}".format(member.aura_points) }} <small>AP</small></strong>
+    </article>
+    {% else %}
+    <p class="empty">No members yet. Run python seed.py to load the initial records.</p>
+    {% endfor %}
+  </section>
+  <footer>Aura Points · Community Leaderboard</footer>
+</main>
+</body>
+</html>

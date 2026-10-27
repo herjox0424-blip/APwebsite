@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aura AP History</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            background: #101014;
+            color: #f5f5f7;
+            font-family: Arial, sans-serif;
+        }
+        main { max-width: 1100px; margin: auto; }
+        h1 { margin-bottom: 8px; }
+        .muted { color: #a3a3ad; }
+        a { color: #c4b5fd; }
+        .panel {
+            background: #1b1b23;
+            border: 1px solid #30303c;
+            border-radius: 14px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .table-wrap { overflow-x: auto; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+        th, td {
+            text-align: left;
+            padding: 13px 12px;
+            border-bottom: 1px solid #30303c;
+            vertical-align: top;
+        }
+        th { color: #c4b5fd; }
+        .positive { color: #86efac; }
+        .negative { color: #fca5a5; }
+        .empty { padding: 20px 0; color: #a3a3ad; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>📜 Aura Points History</h1>
+    <p class="muted">
+        Logged in as {{ staff.name }} · {{ staff.role }}
+    </p>
+
+    <p>
+        <a href="{{ url_for('staff_dashboard') }}">← Back to Staff Dashboard</a>
+        &nbsp; · &nbsp;
+        <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
+    </p>
+
+    <section class="panel">
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date / Time</th>
+                        <th>Member</th>
+                        <th>AP Change</th>
+                        <th>Previous AP</th>
+                        <th>New AP</th>
+                        <th>Reason</th>
+                        <th>Staff Member</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entry in entries %}
+                        <tr>
+                            <td>
+                                {% if entry.created_at %}
+                                    {{ entry.created_at.strftime("%Y-%m-%d %H:%M:%S") }}
+                                    UTC
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </td>
+                            <td>{{ entry.member.display_name }}</td>
+                            <td class="{{ 'positive' if entry.amount > 0 else 'negative' }}">
+                                {{ '+' if entry.amount > 0 else '' }}{{ entry.amount }}
+                            </td>
+                            <td>
+                                {{ entry.old_points if entry.old_points is not none else '—' }}
+                            </td>
+                            <td>
+                                {{ entry.new_points if entry.new_points is not none else '—' }}
+                            </td>
+                            <td>{{ entry.reason }}</td>
+                            <td>
+                                {{ entry.admin_name }}
+                                {% if entry.actor_discord_id %}
+                                    <div class="muted">
+                                        ID: {{ entry.actor_discord_id }}
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty">
+                                No AP changes have been recorded yet.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+</body>
+</html>

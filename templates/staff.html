@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Aura Staff Dashboard</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            background: #101014;
+            color: #f5f5f7;
+            font-family: Arial, sans-serif;
+        }
+        main { max-width: 900px; margin: auto; }
+        h1 { margin-bottom: 6px; }
+        .muted { color: #a3a3ad; }
+        .panel {
+            background: #1b1b23;
+            border: 1px solid #30303c;
+            border-radius: 14px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin: 14px 0 7px;
+            font-weight: bold;
+        }
+        input, select, textarea, button, .link {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font: inherit;
+        }
+        input, select, textarea {
+            color: white;
+            background: #111118;
+            border: 1px solid #414150;
+        }
+        textarea { resize: vertical; min-height: 85px; }
+        button {
+            margin-top: 16px;
+            background: #a78bfa;
+            color: #171323;
+            border: 0;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .link {
+            width: auto;
+            color: #ddd6fe;
+            text-decoration: none;
+            border: 1px solid #414150;
+        }
+        .message {
+            background: #29243b;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .member {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #30303c;
+        }
+        .member:last-child { border-bottom: 0; }
+        @media (max-width: 500px) {
+            .member { flex-direction: column; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <h1>⚡ Aura Staff Dashboard</h1>
+    <p class="muted">
+        Logged in as {{ staff.name }} · {{ staff.role }}
+    </p>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <div class="message">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <nav class="links">
+        <a class="link" href="{{ url_for('leaderboard') }}">Leaderboard</a>
+        <a class="link" href="{{ url_for('history') }}">AP History</a>
+    </nav>
+
+    <section class="panel">
+        <h2>Adjust Aura Points</h2>
+        <p class="muted">
+            Positive numbers add AP. Negative numbers remove AP.
+            Every successful adjustment is recorded.
+        </p>
+
+        <form method="POST" action="{{ url_for('staff_dashboard') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+            <label for="member_id">Member</label>
+            <select id="member_id" name="member_id" required>
+                <option value="">Choose a member</option>
+                {% for member in members %}
+                    <option value="{{ member.id }}">
+                        {{ member.display_name }} — {{ member.aura_points }} AP
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="amount">AP change</label>
+            <input
+                id="amount"
+                name="amount"
+                type="number"
+                step="1"
+                required
+                placeholder="Example: 50 or -25"
+            >
+
+            <label for="reason">Reason for change</label>
+            <textarea
+                id="reason"
+                name="reason"
+                maxlength="250"
+                required
+                placeholder="Explain why AP is being changed..."
+            ></textarea>
+
+            <button type="submit">Save AP Change</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Current Members</h2>
+        {% for member in members %}
+            <div class="member">
+                <span>{{ member.display_name }}</span>
+                <strong>{{ member.aura_points }} AP</strong>
+            </div>
+        {% else %}
+            <p class="muted">No members found.</p>
+        {% endfor %}
+    </section>
+
+    <form method="POST" action="{{ url_for('logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit">Log Out</button>
+    </form>
+</main>
+</body>
+</html>
