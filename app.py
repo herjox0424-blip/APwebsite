@@ -11,13 +11,17 @@ from flask import (
 from dotenv import load_dotenv
 from models import db, Member, APChange
 
+
 load_dotenv()
 
 app = Flask(__name__)
 
-secret_key = os.getenv("SECRET_KEY")
+secret_key = os.environ.get("SECRET_KEY")
 if not secret_key:
-    raise RuntimeError("SECRET_KEY is missing from your .env file.")
+    raise RuntimeError(
+        "SECRET_KEY environment variable is missing. "
+        "Configure it in your .env file locally or in Render Environment."
+    )
 
 app.config["SECRET_KEY"] = secret_key
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
