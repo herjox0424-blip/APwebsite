@@ -157,7 +157,14 @@ def callback():
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             timeout=15,
-        )
+                )
+
+        if token_response.status_code == 429:
+            app.logger.warning(
+                "Discord OAuth rate limited. Retry-After: %s",
+                token_response.headers.get("Retry-After", "not provided"),
+            )
+
         token_response.raise_for_status()
         access_token = token_response.json()["access_token"]
 
