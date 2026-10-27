@@ -1,7 +1,9 @@
-﻿Flask
+﻿
+Flask
 Flask-SQLAlchemy
 Flask-Login
 Flask-WTF
 python-dotenv
+requests
 psycopg[binary]
 gunicorn
